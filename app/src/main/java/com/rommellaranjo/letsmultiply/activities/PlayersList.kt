@@ -28,8 +28,8 @@ class PlayersList : AppCompatActivity() {
             setupPlayerRecyclerView(playersList!!)
         } else {
             Toast.makeText(this, "No one has played this game yet in your phone.", Toast.LENGTH_LONG).show()
-            val intent = Intent(this@PlayersList, MainActivity::class.java)
-            startActivity(intent)
+            //val intent = Intent(this@PlayersList, MainActivity::class.java)
+            //startActivity(intent)
             finish()
         }
 
