@@ -13,7 +13,7 @@ import com.rommellaranjo.letsmultiply.models.*
 class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         private const val DATABASE_NAME = "LetsMultiplyDb"
         private const val TABLE_PLAYER = "Player"
         private const val TABLE_QUESTION = "Question"
@@ -71,12 +71,16 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 + PLAYER_LEVELNEWBIEID + " INTEGER, "
                 + PLAYER_LEVELSAGEID + " INTEGER, "
                 + PLAYER_LEVELHACKERID + " INTEGER, "
+                + PLAYER_REPUTATIONID + " INTEGER, "
+                + PLAYER_SOUNDFX + " INTEGER, "
                 + "FOREIGN KEY(" + PLAYER_LEVELNEWBIEID + ") "
                 + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + "), "
                 + "FOREIGN KEY(" + PLAYER_LEVELSAGEID + ") "
                 + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + "), "
                 + "FOREIGN KEY(" + PLAYER_LEVELHACKERID + ") "
-                + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + ") "
+                + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + "), "
+                + "FOREIGN KEY(" + PLAYER_REPUTATIONID + ") "
+                + "REFERENCES " + TABLE_REPUTATION + "(" + REPUTATION_ID + ") "
                 +")")
         val CREATE_QUESTION_TABLE = ("CREATE TABLE " + TABLE_QUESTION + "("
                 + QUESTION_ID + " INTEGER PRIMARY KEY, "
@@ -240,7 +244,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val contentValues = ContentValues()
         contentValues.put(REPUTATION_NAME, reputation.name)
 
-        val result = db.insert(TABLE_LEVEL, null, contentValues)
+        val result = db.insert(TABLE_REPUTATION, null, contentValues)
         db.close()
 
         return result
@@ -275,7 +279,6 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         return reputations
     }
 
-    // TODO: fun getNextReputation()
     /**
      * Get the next reputation higher than the given reputation id
      */
@@ -481,7 +484,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                             null,null,null,null)
             if (cursor.moveToFirst()) {
                 do {
-                    val option: Option = Option(
+                    val option = Option(
                         cursor.getLong(cursor.getColumnIndex(OPTION_ID)),
                         cursor.getInt(cursor.getColumnIndex(OPTION_OPTION)),
                         cursor.getLong(cursor.getColumnIndex(OPTION_QUESTIONID)),

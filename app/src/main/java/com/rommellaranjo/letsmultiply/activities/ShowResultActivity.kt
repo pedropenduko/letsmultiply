@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.rommellaranjo.letsmultiply.R
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
 import com.rommellaranjo.letsmultiply.models.PlayerModel
+import com.rommellaranjo.letsmultiply.models.Reputation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_show_result.*
 import kotlinx.android.synthetic.main.layout_rank_item.view.*
@@ -21,6 +22,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     private var playerID: Long = 0
     private var dbHandler: DatabaseHandler? = null
     private var playerDetails: PlayerModel? = null
+    private var allReputations: ArrayList<Reputation>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
 
         dbHandler = DatabaseHandler(this)
         playerDetails = dbHandler!!.getPlayer(playerID)
+        allReputations = dbHandler!!.getReputations()
 
         if (score == total_questions) {
             promote()
@@ -67,12 +70,19 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
             tv_result_feedback.text = "You are now promoted to " + nextLevel.level + "!"
 
             // Promote the player to the next level
-            val newPlayerLevel = PlayerModel(
-                playerID,
-                playerDetails!!.name,
-                nextLevel.id
-            )
-            dbHandler!!.updatePlayer(newPlayerLevel)
+            when (playerDetails!!.reputationId) {
+                allReputations!![0].id -> {
+                    playerDetails!!.copy(levelNewbieId = nextLevel.id)
+                }
+                allReputations!![1].id -> {
+                    playerDetails!!.copy(levelSageId = nextLevel.id)
+                }
+                allReputations!![2].id -> {
+                    playerDetails!!.copy(levelHackerId = nextLevel.id)
+                }
+
+            }
+            dbHandler!!.updatePlayer(playerDetails!!)
         } else {
             // TODO: Check if levelID is the last level
         }

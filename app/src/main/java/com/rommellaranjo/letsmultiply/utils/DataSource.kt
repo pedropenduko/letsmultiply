@@ -2,11 +2,20 @@ package com.rommellaranjo.letsmultiply.utils
 
 import com.rommellaranjo.letsmultiply.models.Level
 import com.rommellaranjo.letsmultiply.models.Question
+import com.rommellaranjo.letsmultiply.models.Reputation
 import kotlin.random.Random
 
 class DataSource {
 
     companion object {
+        /**
+         * Get reputations
+         * @return Array of reputation names
+         */
+        fun getReputations(): Array<String> {
+            return arrayOf("Newbie", "Sage", "Hacker")
+        }
+
         /**
          * Get all the game levels
          * @return ArrayList<Level>     Return a Level ArrayList containing all the different game levels

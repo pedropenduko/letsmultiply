@@ -3,6 +3,7 @@ package com.rommellaranjo.letsmultiply.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.telecom.Call
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +14,7 @@ import com.rommellaranjo.letsmultiply.adapters.LevelsAdapter
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
 import com.rommellaranjo.letsmultiply.models.Level
 import com.rommellaranjo.letsmultiply.models.PlayerModel
+import com.rommellaranjo.letsmultiply.models.Reputation
 import kotlinx.android.synthetic.main.layout_rank_list.*
 
 class SelectLevelActivity : AppCompatActivity() {
@@ -21,6 +23,7 @@ class SelectLevelActivity : AppCompatActivity() {
     private var playerDetails: PlayerModel? = null
     private var dbHandler: DatabaseHandler? = null
     private var allLevels: ArrayList<Level>? = null
+    private var allReputations: ArrayList<Reputation>? = null
     private lateinit var levelAdapter: LevelsAdapter
 
     companion object {
@@ -45,9 +48,14 @@ class SelectLevelActivity : AppCompatActivity() {
 
             dbHandler = DatabaseHandler(this)
             allLevels = dbHandler!!.getLevels()
+            allReputations = dbHandler!!.getReputations()
             playerDetails = dbHandler!!.getPlayer(playerID)
 
-            setupLevelRecyclerView(allLevels!!, playerDetails!!.levelId)
+            if (playerDetails != null) {
+                setupLevelRecyclerView(allLevels!!, playerDetails!!)
+            } else {
+                Log.e("Error: ", "Player doesn't exist.")
+            }
         } else {
             Log.e("Error: ", "No Player ID passed.")
         }
@@ -55,17 +63,33 @@ class SelectLevelActivity : AppCompatActivity() {
 
     }
 
-    private fun setupLevelRecyclerView(levels: ArrayList<Level>, playerLevel: Long) {
+    private fun getPlayerReputation(reputationId: Long) : String? {
+        var reputation: String? = null
+        allReputations!!.forEach {
+            when (it.id) {
+                reputationId -> {
+                    reputation = it.name.toString()
+                }
+            }
+        }
+        return reputation
+    }
+
+    private fun setupLevelRecyclerView(levels: ArrayList<Level>, playerDetails: PlayerModel) {
         recycler_view.layoutManager = LinearLayoutManager(this)
         recycler_view.setHasFixedSize(true)
 
-        val levelsAdapter = LevelsAdapter(this, levels, playerLevel)
+        val reputation = getPlayerReputation(playerDetails.reputationId)
+        val levelsAdapter = LevelsAdapter(
+            this,
+            levels,
+            playerDetails,
+            reputation)
+
         recycler_view.adapter = levelsAdapter
 
         levelsAdapter.setOnClickListener(object: LevelsAdapter.OnClickListener {
             override fun onClick(position: Int, model: Level) {
-                // Toast.makeText(this@SelectLevelActivity, "Rank clicked.", Toast.LENGTH_SHORT).show()
-                //Log.e("Levels", "Item clicked.")
                 // call another intent for the actual game
                 val intent = Intent(this@SelectLevelActivity, GameQuestionsActivity::class.java)
                 intent.putExtra(MainActivity.PLAYER_ID, playerID)
