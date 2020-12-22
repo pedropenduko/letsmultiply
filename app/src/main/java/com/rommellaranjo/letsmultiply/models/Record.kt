@@ -7,14 +7,14 @@ data class Record (
     val id: Long,
     val playerId: Long,
     val levelId: Long,
-    val score: Int,
-    val status: Int
+    val score: String?,
+    val reputationId: Int
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readLong(),
         parcel.readLong(),
-        parcel.readInt(),
+        parcel.readString(),
         parcel.readInt()
     ) {
     }
@@ -23,8 +23,8 @@ data class Record (
         parcel.writeLong(id)
         parcel.writeLong(playerId)
         parcel.writeLong(levelId)
-        parcel.writeInt(score)
-        parcel.writeInt(status)
+        parcel.writeString(score)
+        parcel.writeInt(reputationId)
     }
 
     override fun describeContents(): Int {

@@ -46,6 +46,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         private const val RECORD_LEVELID = "LevelId"
         private const val RECORD_SCORE = "Score"
         private const val RECORD_STATUS = "Status"
+        private const val RECORD_REPUTATIONID = "ReputationId"
 
         private const val LEVEL_ID = "Id"
         private const val LEVEL_LEVEL = "Level"
@@ -100,12 +101,15 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 + RECORD_ID + " INTEGER PRIMARY KEY, "
                 + RECORD_PLAYERID + " INTEGER, "
                 + RECORD_LEVELID + " INTEGER, "
-                + RECORD_SCORE + " INTEGER, "
-                + RECORD_STATUS + " INTEGER, "
+                + RECORD_SCORE + " TEXT, "
+                + RECORD_REPUTATIONID + " INTEGER, "
                 + "FOREIGN KEY(" + RECORD_PLAYERID + ") "
                 + "REFERENCES " + TABLE_PLAYER + "(" + PLAYER_ID + "), "
                 + "FOREIGN KEY(" + RECORD_LEVELID + ") "
-                + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + "))")
+                + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + "), "
+                + "FOREIGN KEY(" + RECORD_REPUTATIONID + ") "
+                + "REFERENCES " + TABLE_REPUTATION + "(" + REPUTATION_ID + ") "
+                + ")")
         db?.execSQL(CREATE_LEVEL_TABLE)
         db?.execSQL(CREATE_REPUTATION_TABLE)
         db?.execSQL(CREATE_PLAYER_TABLE)

@@ -10,6 +10,7 @@ import com.rommellaranjo.letsmultiply.R
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
 import com.rommellaranjo.letsmultiply.models.PlayerModel
 import com.rommellaranjo.letsmultiply.models.Reputation
+import com.rommellaranjo.letsmultiply.utils.DataSource
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_show_result.*
 import kotlinx.android.synthetic.main.layout_rank_item.view.*
@@ -22,7 +23,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     private var playerID: Long = 0
     private var dbHandler: DatabaseHandler? = null
     private var playerDetails: PlayerModel? = null
-    private var allReputations: ArrayList<Reputation>? = null
+    private lateinit var allReputations: ArrayList<Reputation>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,27 +63,42 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
         tv_congratulations.text = "Congratulations " + playerDetails!!.name + "!"
         iv_result_image.setImageResource(R.drawable.ic_trophy)
 
-        // TODO: Check if higher level was already unlocked by the Player
         val nextLevel = dbHandler!!.getNextLevel(levelID)
+        lateinit var newPlayer: PlayerModel
 
-        if (nextLevel != null) {
-            tv_score.text = "Your score is $score/$total_questions!"
-            tv_result_feedback.text = "You are now promoted to " + nextLevel.level + "!"
+        tv_score.text = "Your score is $score/$total_questions!"
+        if (nextLevel != null) { // when it is null, there is no more next level
+            var toUpdate: Boolean = false
 
             // Promote the player to the next level
             when (playerDetails!!.reputationId) {
-                allReputations!![0].id -> {
-                    playerDetails!!.copy(levelNewbieId = nextLevel.id)
+                allReputations[0].id -> {
+                    if (nextLevel.id > playerDetails!!.levelNewbieId) { // nextLevel is higher than the current level of the player
+                        newPlayer = playerDetails!!.copy(levelNewbieId = nextLevel.id)
+                        toUpdate = true
+                    }
                 }
-                allReputations!![1].id -> {
-                    playerDetails!!.copy(levelSageId = nextLevel.id)
+                allReputations[1].id -> {
+                    if (nextLevel.id > playerDetails!!.levelSageId) { // nextLevel is higher than the current level of the player
+                        newPlayer = playerDetails!!.copy(levelSageId = nextLevel.id)
+                        toUpdate = true
+                    }
                 }
-                allReputations!![2].id -> {
-                    playerDetails!!.copy(levelHackerId = nextLevel.id)
+                allReputations[2].id -> {
+                    if (nextLevel.id > playerDetails!!.levelHackerId) { // nextLevel is higher than the current level of the player
+                        newPlayer = playerDetails!!.copy(levelHackerId = nextLevel.id)
+                        toUpdate = true
+                    }
                 }
 
             }
-            dbHandler!!.updatePlayer(playerDetails!!)
+            if (toUpdate) {
+                tv_result_feedback.text = "You are now promoted to " + nextLevel.level + "!"
+                dbHandler!!.updatePlayer(newPlayer)
+            } else {
+                tv_result_feedback.text = "Great! You did it again!"
+            }
+
         } else {
             // TODO: Check if levelID is the last level
         }
@@ -94,22 +110,9 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
 
         // TODO: Check if higher level was already unlocked by the Player
         val nextLevel = dbHandler!!.getNextLevel(levelID)
-
-        if (nextLevel != null) {
-            tv_score.text = "Your score is $score/$total_questions!"
-
-            val morePoints = total_questions - score
-            if (morePoints > 1) {
-                tv_result_feedback.text =
-                    "You need $morePoints more points to be promoted to " + nextLevel.level + "."
-            } else {
-                tv_result_feedback.text =
-                    "You need $morePoints more point to be promoted to " + nextLevel.level + "."
-            }
-        } else {
-            //TODO: Check if levelID is the last level
-        }
-
+        tv_score.text = "Your score is $score/$total_questions!"
+        tv_result_feedback.text = DataSource.getMotivation()
+        btn_next.text = "Try Again"
     }
 
     override fun onClick(v: View?) {

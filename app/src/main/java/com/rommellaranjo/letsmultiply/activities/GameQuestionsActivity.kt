@@ -185,9 +185,9 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkAnswer(cv: CardView, i: Int) {
         waiting = true
         when (i) {
-            0 -> {
-                setRedCardViewBackground()
-            }
+//            0 -> {
+//                setRedCardViewBackground()
+//            }
             currentQuestionAnswer -> {
                 // Answer is correct, set background to Green
                 cv.setCardBackgroundColor(Color.parseColor("#4CAF50"))

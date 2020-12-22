@@ -9,6 +9,28 @@ class DataSource {
 
     companion object {
         /**
+         * Give out a quote randomly
+         * @return String A single motivational quote
+         */
+        fun getMotivation() : String {
+            val quote: Array<String> = arrayOf(
+                "\"The only way to learn mathematics is to do mathematics.\" – Paul Halmos",
+                "\"Sometimes the questions are complicated and the answers are simple.\" – Dr. Seuss",
+                "\"Nature is written in mathematical language.\" – Galileo Galilei",
+                "\"Mathematics is a language.\" – Josiah Willard Gibbs",
+                "\"Millions saw the apple fall, but Newton asked why.\" – Bernard Baruch",
+                "\"There are no shortcuts to any place worth going.\" – Beverly Sills",
+                "\"The man who moves a mountain begins by carrying away small stones.\" – Confucius",
+                "\"A winner is just a loser who tried one more time.\" – George Augustus Moore",
+                "\"Success doesn’t come to you, you’ve got to go to it.\" – Marva Collins",
+                "\"Preparation is the key to success.\" – Alexander Graham Bell",
+                "\"It is wiser to find out than to suppose.\" — Mark Twain"
+            )
+            quote.shuffle()
+            return quote[0]
+        }
+
+        /**
          * Get reputations
          * @return Array of reputation names
          */
@@ -156,15 +178,6 @@ class DataSource {
             }
             randomQuestionIndexes.shuffle()
             for (i in 0..11) {
-//                val randomQuestion = question[randomQuestionIndexes[i]].question
-//                question.add(
-//                    Question(
-//                        questionId,
-//                        randomQuestion,
-//                        levelId
-//                    )
-//                )
-                // this one below is basically the same with above commented code, but shorter
                 question.add(
                     question[randomQuestionIndexes[i]].copy(id = questionId, levelId = levelId)
                 )
