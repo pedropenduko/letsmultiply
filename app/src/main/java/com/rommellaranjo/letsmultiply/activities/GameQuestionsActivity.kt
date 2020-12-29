@@ -2,8 +2,11 @@ package com.rommellaranjo.letsmultiply.activities
 
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -20,7 +23,7 @@ import com.rommellaranjo.letsmultiply.models.QuestionWithOptions
 import com.rommellaranjo.letsmultiply.models.Reputation
 import kotlinx.android.synthetic.main.activity_game_questions.*
 import java.util.*
-import kotlin.concurrent.schedule
+//import kotlin.concurrent.schedule
 import kotlin.collections.ArrayList
 
 //import org.w3c.dom.Text
@@ -39,6 +42,14 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var allReputations: ArrayList<Reputation>
     private var score : Int = 0
     private var waiting: Boolean = false
+
+    private var questionDuration: Long = 2000
+    private var timer: CountDownTimer? = null
+    private var timerExpired: Boolean = false
+
+    private var applauseSoundFx: MediaPlayer? = null
+    private var correctSoundFx: MediaPlayer? = null
+    private var errorSoundFx: MediaPlayer? = null
 
     companion object {
         const val SCORE = "score"
@@ -108,9 +119,54 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
+     * This function will play the sound effects
+     */
+    private fun playSoundFx(effect: Int) {
+        when (effect) {
+            1 -> {
+                // applause
+                try {
+                    if (applauseSoundFx == null) {
+                        applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
+                        applauseSoundFx!!.isLooping = false
+                    }
+                    applauseSoundFx!!.start()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            2 -> {
+                // correct
+                try {
+                    if (correctSoundFx == null) {
+                        correctSoundFx = MediaPlayer.create(applicationContext, R.raw.correct)
+                        correctSoundFx!!.isLooping = false
+                    }
+                    correctSoundFx!!.start()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            3 -> {
+                // error
+                try {
+                    if (errorSoundFx == null) {
+                        errorSoundFx = MediaPlayer.create(applicationContext, R.raw.error)
+                        errorSoundFx!!.isLooping = false
+                    }
+                    errorSoundFx!!.start()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    /**
      * This function will display the question and the options/choices in the screen
      */
     private fun displayQuestion() {
+        timerExpired = false
         val question = allQuestions.get(currentQuestion - 1)
 
         // clear the background color
@@ -133,6 +189,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             tvOfOptions[i].text = options[i].option.toString()
             if (options[i].correct == 1) currentQuestionAnswer = i
         }
+        startTimer()
     }
 
     /**
@@ -151,6 +208,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
      * This will happen or be called when the question timer has expired
      */
     private fun setRedCardViewBackground() {
+        playSoundFx(3)
         val cvOfOptions : ArrayList<CardView> = arrayListOf<CardView>(cv_choice_a,
             cv_choice_b, cv_choice_c, cv_choice_d)
         cvOfOptions.forEach {
@@ -160,18 +218,21 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
 
     override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.cv_choice_a -> {
-                if (!waiting) checkAnswer(cv_choice_a, 0)
-            }
-            R.id.cv_choice_b -> {
-                if (!waiting) checkAnswer(cv_choice_b, 1)
-            }
-            R.id.cv_choice_c -> {
-                if (!waiting) checkAnswer(cv_choice_c, 2)
-            }
-            R.id.cv_choice_d -> {
-                if (!waiting) checkAnswer(cv_choice_d, 3)
+        if (!timerExpired) {
+            resetTimer()
+            when (v?.id) {
+                R.id.cv_choice_a -> {
+                    if (!waiting) checkAnswer(cv_choice_a, 0)
+                }
+                R.id.cv_choice_b -> {
+                    if (!waiting) checkAnswer(cv_choice_b, 1)
+                }
+                R.id.cv_choice_c -> {
+                    if (!waiting) checkAnswer(cv_choice_c, 2)
+                }
+                R.id.cv_choice_d -> {
+                    if (!waiting) checkAnswer(cv_choice_d, 3)
+                }
             }
         }
     }
@@ -190,11 +251,13 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
 //            }
             currentQuestionAnswer -> {
                 // Answer is correct, set background to Green
+                playSoundFx(2)
                 cv.setCardBackgroundColor(Color.parseColor("#4CAF50"))
                 score++
             }
             else -> {
                 // Answer is wrong, set background to Red
+                playSoundFx(3)
                 cv.setCardBackgroundColor(Color.parseColor("#CA0101"))
             }
         }
@@ -217,4 +280,63 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             }
         },1000)
     }
+
+    private fun startTimer() {
+        timer = object: CountDownTimer(questionDuration, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                /*pauseOffset = timerDuration - millisUntilFinished
+                binding.tvTime.text = (millisUntilFinished / 1000).toString()*/
+            }
+
+            override fun onFinish() {
+                timerExpired = true
+                setRedCardViewBackground()
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    waiting = false
+                    currentQuestion++
+                    if (currentQuestion <= allQuestions.size){
+                        displayQuestion()
+                    } else {
+                        val intent = Intent(this@GameQuestionsActivity, ShowResultActivity::class.java)
+
+                        intent.putExtra(SCORE, score)
+                        intent.putExtra(TOTAL_QUESTIONS, allQuestions.size)
+                        intent.putExtra(LEVEL_ID, levelID)
+                        intent.putExtra(MainActivity.PLAYER_ID, playerID)
+                        startActivity(intent)
+
+                        finish()
+
+                    }
+                },1000)
+                //Toast.makeText(this@GameQuestionsActivity, "Timer is finished.", Toast.LENGTH_SHORT).show()
+            }
+
+        }.start()
+    }
+
+    private fun resetTimer() {
+        if (timer != null) {
+            timer!!.cancel()
+            timer = null
+        }
+    }
+
+    public override fun onDestroy() {
+        if (timer != null) {
+            timer!!.cancel()
+        }
+        if (applauseSoundFx != null) {
+            applauseSoundFx!!.stop()
+        }
+        if (correctSoundFx != null) {
+            correctSoundFx!!.stop()
+        }
+        if (errorSoundFx != null) {
+            errorSoundFx!!.stop()
+        }
+        super.onDestroy()
+    }
+
 }

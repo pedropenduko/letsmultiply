@@ -1,6 +1,7 @@
 package com.rommellaranjo.letsmultiply.activities
 
 import android.content.Intent
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_show_result.*
 import kotlinx.android.synthetic.main.layout_rank_item.view.*
 
 class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
-
+    // TODO: Play sound fx upon displaying the result... that is if soundfx = 1
     private var score: Int = 0
     private var total_questions: Int = 0
     private var levelID: Long = 0
@@ -24,6 +25,8 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     private var dbHandler: DatabaseHandler? = null
     private var playerDetails: PlayerModel? = null
     private lateinit var allReputations: ArrayList<Reputation>
+
+    private var applauseSoundFx: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +63,16 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun promote() {
+        // applause
+        try {
+            if (applauseSoundFx == null) {
+                applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
+                applauseSoundFx!!.isLooping = false
+            }
+            applauseSoundFx!!.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         tv_congratulations.text = "Congratulations " + playerDetails!!.name + "!"
         iv_result_image.setImageResource(R.drawable.ic_trophy)
 
@@ -105,10 +118,19 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun appreciate() {
+        // applause
+        try {
+            if (applauseSoundFx == null) {
+                applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
+                applauseSoundFx!!.isLooping = false
+            }
+            applauseSoundFx!!.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         tv_congratulations.text = "Good job " + playerDetails!!.name + "!"
         iv_result_image.setImageResource(R.drawable.ic_balloons)
 
-        // TODO: Check if higher level was already unlocked by the Player
         val nextLevel = dbHandler!!.getNextLevel(levelID)
         tv_score.text = "Your score is $score/$total_questions!"
         tv_result_feedback.text = DataSource.getMotivation()
@@ -124,5 +146,13 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
         }
+    }
+
+    public override fun onDestroy() {
+        if (applauseSoundFx != null) {
+            applauseSoundFx!!.stop()
+        }
+
+        super.onDestroy()
     }
 }
