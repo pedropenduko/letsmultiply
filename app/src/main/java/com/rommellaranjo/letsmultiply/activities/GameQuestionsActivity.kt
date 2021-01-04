@@ -130,7 +130,13 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                         applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
                         applauseSoundFx!!.isLooping = false
                     }
-                    applauseSoundFx!!.start()
+                    if (applauseSoundFx!!.isPlaying) {
+                        applauseSoundFx!!.stop()
+                        applauseSoundFx!!.prepare()
+                        applauseSoundFx!!.start()
+                    } else {
+                        applauseSoundFx!!.start()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -142,7 +148,15 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                         correctSoundFx = MediaPlayer.create(applicationContext, R.raw.correct)
                         correctSoundFx!!.isLooping = false
                     }
-                    correctSoundFx!!.start()
+                    if (correctSoundFx!!.isPlaying) {
+                        Log.i("Correct:", "Stop - Start sound.")
+                        correctSoundFx!!.stop()
+                        correctSoundFx!!.prepare()
+                        correctSoundFx!!.start()
+                    } else {
+                        Log.i("Correct:", "Playing a sound.")
+                        correctSoundFx!!.start()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -154,7 +168,15 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                         errorSoundFx = MediaPlayer.create(applicationContext, R.raw.error)
                         errorSoundFx!!.isLooping = false
                     }
-                    errorSoundFx!!.start()
+                    if (errorSoundFx!!.isPlaying) {
+                        Log.i("Wrong:", "Stop-Start sound.")
+                        errorSoundFx!!.stop()
+                        errorSoundFx!!.prepare()
+                        errorSoundFx!!.start()
+                    } else {
+                        Log.i("Wrong:", "Playing a sound.")
+                        errorSoundFx!!.start()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
