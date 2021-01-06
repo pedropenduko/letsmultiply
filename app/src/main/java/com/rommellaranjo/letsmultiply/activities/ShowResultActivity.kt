@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_show_result.*
 import kotlinx.android.synthetic.main.layout_rank_item.view.*
 
 class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
-    // TODO: Play sound fx upon displaying the result... that is if soundfx = 1
+
     private var score: Int = 0
     private var total_questions: Int = 0
     private var levelID: Long = 0
@@ -27,6 +27,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var allReputations: ArrayList<Reputation>
 
     private var applauseSoundFx: MediaPlayer? = null
+    private var withSoundEffects: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +54,10 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
         playerDetails = dbHandler!!.getPlayer(playerID)
         allReputations = dbHandler!!.getReputations()
 
+        if (playerDetails != null) {
+            withSoundEffects = playerDetails!!.soundFx == 1
+        }
+
         if (score == total_questions) {
             promote()
         } else {
@@ -64,15 +69,18 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun promote() {
         // applause
-        try {
-            if (applauseSoundFx == null) {
-                applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
-                applauseSoundFx!!.isLooping = false
+        if (withSoundEffects) {
+            try {
+                if (applauseSoundFx == null) {
+                    applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
+                    applauseSoundFx!!.isLooping = false
+                }
+                applauseSoundFx!!.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            applauseSoundFx!!.start()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
+
         tv_congratulations.text = "Congratulations " + playerDetails!!.name + "!"
         iv_result_image.setImageResource(R.drawable.ic_trophy)
 
@@ -119,19 +127,21 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun appreciate() {
         // applause
-        try {
-            if (applauseSoundFx == null) {
-                applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
-                applauseSoundFx!!.isLooping = false
+        if (withSoundEffects) {
+            try {
+                if (applauseSoundFx == null) {
+                    applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
+                    applauseSoundFx!!.isLooping = false
+                }
+                applauseSoundFx!!.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            applauseSoundFx!!.start()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
+
         tv_congratulations.text = "Good job " + playerDetails!!.name + "!"
         iv_result_image.setImageResource(R.drawable.ic_balloons)
-
-        val nextLevel = dbHandler!!.getNextLevel(levelID)
+        
         tv_score.text = "Your score is $score/$total_questions!"
         tv_result_feedback.text = DataSource.getMotivation()
         btn_next.text = "Try Again"

@@ -24,7 +24,7 @@ class SelectLevelActivity : AppCompatActivity() {
     private var dbHandler: DatabaseHandler? = null
     private var allLevels: ArrayList<Level>? = null
     private var allReputations: ArrayList<Reputation>? = null
-    private lateinit var levelAdapter: LevelsAdapter
+    //private lateinit var levelAdapter: LevelsAdapter
 
     companion object {
         const val RANK_CLICKED = "rank_clicked"
@@ -114,7 +114,11 @@ class SelectLevelActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.menu_settings -> {
-                Toast.makeText(this, "Show Settings UI...", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Show Settings UI...", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@SelectLevelActivity, SettingsActivity::class.java)
+                intent.putExtra(MainActivity.PLAYER_ID, playerID)
+                startActivity(intent)
+                finish()
                 true
             } else -> super.onOptionsItemSelected(item)
         }

@@ -33,6 +33,8 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
     private var playerID : Long = 0
     private var levelID : Long = 0
+    private var gameReputation: Int = 0
+    private var withSoundFx: Boolean = true
 
     private var currentQuestion : Int = 1
     private var currentQuestionAnswer : Int? = null
@@ -43,7 +45,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var score : Int = 0
     private var waiting: Boolean = false
 
-    private var questionDuration: Long = 2000
+    private var questionDuration: Long = 1000
     private var timer: CountDownTimer? = null
     private var timerExpired: Boolean = false
 
@@ -82,6 +84,8 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         if (playerDetails == null) {
             Log.e("Let's Multiply Error: ", "Player doesn't exist.")
             finish()
+        } else {
+            withSoundFx = playerDetails!!.soundFx == 1
         }
 
         allReputations = dbHandler!!.getReputations()
@@ -94,11 +98,17 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             when (playerDetails!!.reputationId) {
                 allReputations[0].id -> { // Newbie
                     // nothing to do here
+                    // no randomize questions
+                    // no timer
+                    gameReputation = 0
                 }
                 allReputations[1].id -> { // Sage
+                    gameReputation = 1
                     allQuestions.shuffle() // randomize the questions
                 }
                 allReputations[2].id -> { // Hacker
+                    gameReputation = 2
+                    allQuestions.shuffle() // randomize the questions
                     // set timer for each question
                 }
             }
@@ -122,66 +132,69 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
      * This function will play the sound effects
      */
     private fun playSoundFx(effect: Int) {
-        when (effect) {
-            1 -> {
-                // applause
-                try {
-                    if (applauseSoundFx == null) {
-                        applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
-                        applauseSoundFx!!.isLooping = false
+        if (withSoundFx) {
+            when (effect) {
+                1 -> {
+                    // applause
+                    try {
+                        if (applauseSoundFx == null) {
+                            applauseSoundFx = MediaPlayer.create(applicationContext, R.raw.applause)
+                            applauseSoundFx!!.isLooping = false
+                        }
+                        if (applauseSoundFx!!.isPlaying) {
+                            applauseSoundFx!!.stop()
+                            applauseSoundFx!!.prepare()
+                            applauseSoundFx!!.start()
+                        } else {
+                            applauseSoundFx!!.start()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    if (applauseSoundFx!!.isPlaying) {
-                        applauseSoundFx!!.stop()
-                        applauseSoundFx!!.prepare()
-                        applauseSoundFx!!.start()
-                    } else {
-                        applauseSoundFx!!.start()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }
-            2 -> {
-                // correct
-                try {
-                    if (correctSoundFx == null) {
-                        correctSoundFx = MediaPlayer.create(applicationContext, R.raw.correct)
-                        correctSoundFx!!.isLooping = false
+                2 -> {
+                    // correct
+                    try {
+                        if (correctSoundFx == null) {
+                            correctSoundFx = MediaPlayer.create(applicationContext, R.raw.correct)
+                            correctSoundFx!!.isLooping = false
+                        }
+                        if (correctSoundFx!!.isPlaying) {
+                            Log.i("Correct:", "Stop - Start sound.")
+                            correctSoundFx!!.stop()
+                            correctSoundFx!!.prepare()
+                            correctSoundFx!!.start()
+                        } else {
+                            Log.i("Correct:", "Playing a sound.")
+                            correctSoundFx!!.start()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    if (correctSoundFx!!.isPlaying) {
-                        Log.i("Correct:", "Stop - Start sound.")
-                        correctSoundFx!!.stop()
-                        correctSoundFx!!.prepare()
-                        correctSoundFx!!.start()
-                    } else {
-                        Log.i("Correct:", "Playing a sound.")
-                        correctSoundFx!!.start()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }
-            3 -> {
-                // error
-                try {
-                    if (errorSoundFx == null) {
-                        errorSoundFx = MediaPlayer.create(applicationContext, R.raw.error)
-                        errorSoundFx!!.isLooping = false
+                3 -> {
+                    // error
+                    try {
+                        if (errorSoundFx == null) {
+                            errorSoundFx = MediaPlayer.create(applicationContext, R.raw.error)
+                            errorSoundFx!!.isLooping = false
+                        }
+                        if (errorSoundFx!!.isPlaying) {
+                            Log.i("Wrong:", "Stop-Start sound.")
+                            errorSoundFx!!.stop()
+                            errorSoundFx!!.prepare()
+                            errorSoundFx!!.start()
+                        } else {
+                            Log.i("Wrong:", "Playing a sound.")
+                            errorSoundFx!!.start()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    if (errorSoundFx!!.isPlaying) {
-                        Log.i("Wrong:", "Stop-Start sound.")
-                        errorSoundFx!!.stop()
-                        errorSoundFx!!.prepare()
-                        errorSoundFx!!.start()
-                    } else {
-                        Log.i("Wrong:", "Playing a sound.")
-                        errorSoundFx!!.start()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
         }
+
     }
 
     /**
@@ -211,7 +224,11 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             tvOfOptions[i].text = options[i].option.toString()
             if (options[i].correct == 1) currentQuestionAnswer = i
         }
-        startTimer()
+
+        // start timer only when reputation is hacker
+        if (gameReputation == 2) {
+            startTimer()
+        }
     }
 
     /**
@@ -304,7 +321,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun startTimer() {
-        timer = object: CountDownTimer(questionDuration, 1000) {
+        timer = object: CountDownTimer(questionDuration, 500) {
             override fun onTick(millisUntilFinished: Long) {
                 /*pauseOffset = timerDuration - millisUntilFinished
                 binding.tvTime.text = (millisUntilFinished / 1000).toString()*/

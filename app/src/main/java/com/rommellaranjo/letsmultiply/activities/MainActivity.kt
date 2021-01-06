@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         btn_start.setOnClickListener(this)
         btn_playas.setOnClickListener(this)
-        // TODO: Create a new theme with Army colors
     }
 
     /**

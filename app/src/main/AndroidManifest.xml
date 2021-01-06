@@ -9,9 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.PlayersList"
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="Game Settings"
+            android:screenOrientation="portrait"
+            />
+        <activity
+            android:name=".activities.PlayersList"
             android:label="Players"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ShowResultActivity"
             android:screenOrientation="portrait"
@@ -23,7 +29,7 @@
             android:name=".activities.SelectLevelActivity"
             android:label="Game Ranks"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"/>
+            android:theme="@style/NoActionBarTheme" />
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
