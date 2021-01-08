@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
 
-                <androidx.appcompat.widget.AppCompatEditText
+                <!--androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -70,7 +70,16 @@
                     android:hint="Name"
                     android:inputType="textCapWords"
                     android:textColor="#363A43"
-                    android:textColorHint="#7A8089"/>
+                    android:textColorHint="#7A8089"/-->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionGo"
+                    android:hint="Name"
+                    android:inputType="textCapWords"
+                    android:textColor="#363A43"
+                    android:textColorHint="#7A8089" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
