@@ -135,7 +135,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
                     rep = 2
                 }
                 allReputations[2].id -> { // hacker -> display "Congratulations! You have reached the pinnacle of this game!..."
-                    val intent = Intent(this, UltimateResult::class.java)
+                    val intent = Intent(this, UltimateResultActivity::class.java)
                     intent.putExtra(PLAYER_NAME, playerDetails!!.name)
                     startActivity(intent)
                     finish()

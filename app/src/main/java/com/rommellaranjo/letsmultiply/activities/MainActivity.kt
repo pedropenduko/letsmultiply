@@ -3,7 +3,6 @@ package com.rommellaranjo.letsmultiply.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.rommellaranjo.letsmultiply.R
@@ -162,8 +161,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             // Continue Playing As Button was clicked
             R.id.btn_playas -> {
-                // A returning player, open up the PlayersList Activity
-                val intent = Intent(this, PlayersList::class.java)
+                // A returning player, open up the PlayersListActivity Activity
+                val intent = Intent(this, PlayersListActivity::class.java)
                 startActivity(intent)
                 //finish()
             }

@@ -8,7 +8,7 @@ import com.rommellaranjo.letsmultiply.database.DatabaseHandler
 import com.rommellaranjo.letsmultiply.models.PlayerModel
 import kotlinx.android.synthetic.main.activity_ultimate_result.*
 
-class UltimateResult : AppCompatActivity() {
+class UltimateResultActivity : AppCompatActivity() {
 
     private lateinit var playerName: String
     private var drumSoundFx: MediaPlayer? = null

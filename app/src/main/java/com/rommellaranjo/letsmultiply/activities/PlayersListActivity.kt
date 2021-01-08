@@ -8,11 +8,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rommellaranjo.letsmultiply.R
 import com.rommellaranjo.letsmultiply.adapters.PlayersAdapter
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
-import com.rommellaranjo.letsmultiply.models.Level
 import com.rommellaranjo.letsmultiply.models.PlayerModel
 import kotlinx.android.synthetic.main.layout_rank_list.*
 
-class PlayersList : AppCompatActivity() {
+class PlayersListActivity : AppCompatActivity() {
     // TODO: Allow Edit of player name
     // TODO: Allow Delete of player
     // TODO: Just delete the Record Table ... not in use
@@ -31,7 +30,7 @@ class PlayersList : AppCompatActivity() {
             setupPlayerRecyclerView(playersList!!)
         } else {
             Toast.makeText(this, "No one has played this game yet in your phone.", Toast.LENGTH_LONG).show()
-            //val intent = Intent(this@PlayersList, MainActivity::class.java)
+            //val intent = Intent(this@PlayersListActivity, MainActivity::class.java)
             //startActivity(intent)
             finish()
         }
@@ -48,7 +47,7 @@ class PlayersList : AppCompatActivity() {
         playersAdapter.setOnClickListener(object: PlayersAdapter.OnClickListener {
             override fun onClick(position: Int, model: PlayerModel) {
                 val playerID = model.id
-                val intent = Intent(this@PlayersList, SelectLevelActivity::class.java)
+                val intent = Intent(this@PlayersListActivity, SelectLevelActivity::class.java)
                 intent.putExtra(MainActivity.PLAYER_ID, playerID)
                 startActivity(intent)
                 finish()
