@@ -13,7 +13,10 @@ import com.rommellaranjo.letsmultiply.models.PlayerModel
 import kotlinx.android.synthetic.main.layout_rank_list.*
 
 class PlayersList : AppCompatActivity() {
-
+    // TODO: Allow Edit of player name
+    // TODO: Allow Delete of player
+    // TODO: Just delete the Record Table ... not in use
+    // TODO: Add Ads 
     private var dbHandler: DatabaseHandler? = null
     private var playersList: ArrayList<PlayerModel>? = null
 

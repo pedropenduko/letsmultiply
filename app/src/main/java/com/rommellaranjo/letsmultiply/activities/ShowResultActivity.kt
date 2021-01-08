@@ -4,17 +4,13 @@ import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import com.rommellaranjo.letsmultiply.R
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
 import com.rommellaranjo.letsmultiply.models.PlayerModel
 import com.rommellaranjo.letsmultiply.models.Reputation
 import com.rommellaranjo.letsmultiply.utils.DataSource
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_show_result.*
-import kotlinx.android.synthetic.main.layout_rank_item.view.*
 
 class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -28,6 +24,10 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
 
     private var applauseSoundFx: MediaPlayer? = null
     private var withSoundEffects: Boolean = true
+
+    companion object {
+        const val PLAYER_NAME = "player_name"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,9 +88,9 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
         lateinit var newPlayer: PlayerModel
 
         tv_score.text = "Your score is $score/$total_questions!"
+        var toUpdate: Boolean = false
+        var rep: Int = 0
         if (nextLevel != null) { // when it is null, there is no more next level
-            var toUpdate: Boolean = false
-
             // Promote the player to the next level
             when (playerDetails!!.reputationId) {
                 allReputations[0].id -> {
@@ -121,7 +121,31 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
             }
 
         } else {
-            // TODO: Check if levelID is the last level
+
+            // Promote the player to the next reputation
+            when (playerDetails!!.reputationId) {
+                allReputations[0].id -> { // newbie -> promote to sage
+                    newPlayer = playerDetails!!.copy(reputationId = allReputations[1].id)
+                    toUpdate = true
+                    rep = 1
+                }
+                allReputations[1].id -> { // sage -> promote to hacker
+                    newPlayer = playerDetails!!.copy(reputationId = allReputations[2].id)
+                    toUpdate = true
+                    rep = 2
+                }
+                allReputations[2].id -> { // hacker -> display "Congratulations! You have reached the pinnacle of this game!..."
+                    val intent = Intent(this, UltimateResult::class.java)
+                    intent.putExtra(PLAYER_NAME, playerDetails!!.name)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+            if (toUpdate) {
+                tv_result_feedback.text = "Your reputation is upgraded to " + allReputations[rep].name + "!"
+                dbHandler!!.updatePlayer(newPlayer)
+            }
         }
     }
 
