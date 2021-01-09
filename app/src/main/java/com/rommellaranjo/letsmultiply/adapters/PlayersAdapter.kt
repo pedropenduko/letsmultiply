@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rommellaranjo.letsmultiply.R
+import com.rommellaranjo.letsmultiply.activities.PlayersListActivity
 import com.rommellaranjo.letsmultiply.models.PlayerModel
 import kotlinx.android.synthetic.main.layout_player_item.view.*
 
@@ -34,6 +35,18 @@ open class PlayersAdapter(private val context: Context,
             holder.itemView.setOnClickListener{
                 if (onClickListener != null) {
                     onClickListener!!.onClick(position, model)
+                }
+            }
+
+            holder.itemView.iv_edit_player.setOnClickListener {
+                if (context is PlayersListActivity) {
+                    context.updatePlayerDialog(model)
+                }
+            }
+
+            holder.itemView.iv_delete_player.setOnClickListener {
+                if (context is PlayersListActivity) {
+                    context.deletePlayerDialog(model)
                 }
             }
         }

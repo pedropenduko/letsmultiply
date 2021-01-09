@@ -77,6 +77,7 @@
                     android:layout_height="wrap_content"
                     android:imeOptions="actionGo"
                     android:hint="Name"
+                    android:maxLength="25"
                     android:inputType="textCapWords"
                     android:textColor="#363A43"
                     android:textColorHint="#7A8089" />

@@ -3,9 +3,11 @@ package com.rommellaranjo.letsmultiply.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import android.widget.Toast
 import com.rommellaranjo.letsmultiply.models.*
 //import android.database.sqlite.SQLiteQueryBuilder
@@ -144,9 +146,14 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         contentValues.put(PLAYER_REPUTATIONID, 1) // default
         contentValues.put(PLAYER_SOUNDFX, 1) // default "On"
 
-        val result = db.insert(TABLE_PLAYER, null, contentValues)
+        var result: Long = -1
+        result = try {
+            db.insert(TABLE_PLAYER, null, contentValues)
+        } catch (e: SQLiteConstraintException) {
+            Log.e("LetsMultiply", e.toString())
+            -1
+        }
         db.close()
-
         return result
     }
 
@@ -231,8 +238,27 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         contentValues.put(PLAYER_REPUTATIONID, player.reputationId)
         contentValues.put(PLAYER_SOUNDFX, player.soundFx)
 
-        val result = db.update(TABLE_PLAYER, contentValues,
-        "$PLAYER_ID=?", arrayOf(player.id.toString()))
+        var result: Int = -1
+        result = try {
+            db.update(TABLE_PLAYER, contentValues,
+                "$PLAYER_ID=?", arrayOf(player.id.toString()))
+        } catch (e: SQLiteConstraintException) {
+            Log.e("LetsMultiply", e.toString())
+            -1
+        }
+        db.close()
+        return result
+    }
+
+    /**
+     * Delete player
+     */
+    fun deletePlayer(playerID: Long) : Int {
+        val db = this.writableDatabase
+        val selection = "$PLAYER_ID = ? "
+        val selectionArgs = arrayOf(playerID.toString())
+
+        val result = db.delete(TABLE_PLAYER, selection, selectionArgs)
         db.close()
         return result
     }

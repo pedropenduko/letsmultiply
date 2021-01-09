@@ -1,8 +1,10 @@
 package com.rommellaranjo.letsmultiply.activities
 
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.rommellaranjo.letsmultiply.R
@@ -130,7 +132,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(this, "Please type a name.", Toast.LENGTH_SHORT).show()
                     }
                     !validator.isAlphaNumeric(et_name.text.toString()) -> {
-                        Toast.makeText(this, "Please use only letters[a-z or A-Z] and numbers[0-9].", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Please use only letters[a-z or A-Z] and numbers[0-9].",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    !validator.isCorrectLength(et_name.text.toString(), 25) -> {
+                        Toast.makeText(
+                            this,
+                            "Name should not be greater than 25 characters.",
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else -> {
 
                         val playerModel = PlayerModel(
@@ -142,7 +155,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             allReputations[0].id, // default
                             1 // default
                         )
-
                         // Save the Player Name together with some default values into the DB
                         val playerID = dbHandler.addPlayer(playerModel)
 
