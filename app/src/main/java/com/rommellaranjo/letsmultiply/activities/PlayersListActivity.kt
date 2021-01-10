@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.layout_rank_list.*
 import kotlinx.android.synthetic.main.popup_dialog.*
 
 class PlayersListActivity : AppCompatActivity() {
-    // TODO: Just delete the Record Table ... not in use
     // TODO: Add Ads 
     private var dbHandler: DatabaseHandler? = null
     private var playersList: ArrayList<PlayerModel>? = null

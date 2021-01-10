@@ -15,12 +15,11 @@ import com.rommellaranjo.letsmultiply.models.*
 class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 4
         private const val DATABASE_NAME = "LetsMultiplyDb"
         private const val TABLE_PLAYER = "Player"
         private const val TABLE_QUESTION = "Question"
         private const val TABLE_OPTION = "Option"
-        private const val TABLE_RECORD = "Record"
         private const val TABLE_LEVEL = "Level"
         private const val TABLE_REPUTATION = "Reputation"
 
@@ -42,13 +41,6 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         private const val OPTION_OPTION = "Option"
         private const val OPTION_QUESTIONID = "QuestionId"
         private const val OPTION_CORRECT = "Correct"
-
-        private const val RECORD_ID = "Id"
-        private const val RECORD_PLAYERID = "PlayerId"
-        private const val RECORD_LEVELID = "LevelId"
-        private const val RECORD_SCORE = "Score"
-        private const val RECORD_STATUS = "Status"
-        private const val RECORD_REPUTATIONID = "ReputationId"
 
         private const val LEVEL_ID = "Id"
         private const val LEVEL_LEVEL = "Level"
@@ -99,30 +91,15 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 + OPTION_CORRECT + " INTEGER, "
                 + "FOREIGN KEY(" + OPTION_QUESTIONID + ") "
                 + "REFERENCES " + TABLE_QUESTION + "(" + QUESTION_ID + "))")
-        val CREATE_RECORD_TABLE = ("CREATE TABLE " + TABLE_RECORD + "("
-                + RECORD_ID + " INTEGER PRIMARY KEY, "
-                + RECORD_PLAYERID + " INTEGER, "
-                + RECORD_LEVELID + " INTEGER, "
-                + RECORD_SCORE + " TEXT, "
-                + RECORD_REPUTATIONID + " INTEGER, "
-                + "FOREIGN KEY(" + RECORD_PLAYERID + ") "
-                + "REFERENCES " + TABLE_PLAYER + "(" + PLAYER_ID + "), "
-                + "FOREIGN KEY(" + RECORD_LEVELID + ") "
-                + "REFERENCES " + TABLE_LEVEL + "(" + LEVEL_ID + "), "
-                + "FOREIGN KEY(" + RECORD_REPUTATIONID + ") "
-                + "REFERENCES " + TABLE_REPUTATION + "(" + REPUTATION_ID + ") "
-                + ")")
         db?.execSQL(CREATE_LEVEL_TABLE)
         db?.execSQL(CREATE_REPUTATION_TABLE)
         db?.execSQL(CREATE_PLAYER_TABLE)
         db?.execSQL(CREATE_QUESTION_TABLE)
         db?.execSQL(CREATE_OPTION_TABLE)
-        db?.execSQL(CREATE_RECORD_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db!!.execSQL("DROP TABLE IF EXISTS $TABLE_RECORD")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_OPTION")
+        db!!.execSQL("DROP TABLE IF EXISTS $TABLE_OPTION")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_QUESTION")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_PLAYER")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_REPUTATION")
