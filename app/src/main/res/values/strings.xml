@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">LetsMultiply</string>
+    <string name="app_name_full">Let\'s Multiply!</string>
+    <string name="menu_settings">Settings</string>
+</resources>
