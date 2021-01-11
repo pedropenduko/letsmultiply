@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.UltimateResultActivity"></activity>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+        <activity
+            android:name=".activities.UltimateResultActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.SettingsActivity"
             android:label="Game Settings"
