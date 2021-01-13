@@ -4,12 +4,15 @@ import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import com.google.android.gms.ads.*
 import com.rommellaranjo.letsmultiply.R
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
 import com.rommellaranjo.letsmultiply.models.PlayerModel
 import com.rommellaranjo.letsmultiply.models.Reputation
 import com.rommellaranjo.letsmultiply.utils.DataSource
+import kotlinx.android.synthetic.main.activity_game_questions.*
 import kotlinx.android.synthetic.main.activity_show_result.*
 
 class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
@@ -25,6 +28,8 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     private var applauseSoundFx: MediaPlayer? = null
     private var withSoundEffects: Boolean = true
 
+    private lateinit var mInterstitialAd: InterstitialAd
+
     companion object {
         const val PLAYER_NAME = "player_name"
     }
@@ -32,6 +37,21 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_result)
+
+        // preparing the ads
+        MobileAds.initialize(this)
+        val adRequest = AdRequest.Builder().build()
+        mInterstitialAd = InterstitialAd(this)
+
+        // randomly load a video or image ad
+        if (DataSource.tossCoin()) {
+            // show a video ad
+            mInterstitialAd.adUnitId = getString(R.string.admob_interstitial_video_id)
+        } else {
+            // show an image ad
+            mInterstitialAd.adUnitId = getString(R.string.admob_interstitial_id)
+        }
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
 
         // get score
         if (intent.hasExtra(GameQuestionsActivity.SCORE)) {
@@ -50,6 +70,9 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
             levelID = intent.getLongExtra(GameQuestionsActivity.LEVEL_ID, 0)
         }
 
+        // Load the Banner Ads
+        av_banner_show_result.loadAd(adRequest)
+
         dbHandler = DatabaseHandler(this)
         playerDetails = dbHandler!!.getPlayer(playerID)
         allReputations = dbHandler!!.getReputations()
@@ -62,6 +85,16 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
             promote()
         } else {
             appreciate()
+        }
+
+        mInterstitialAd.adListener = object : AdListener() {
+            override fun onAdClosed() {
+                // Go to next activity when ad is closed
+                val intent = Intent(this@ShowResultActivity, SelectLevelActivity::class.java)
+                intent.putExtra(MainActivity.PLAYER_ID, playerID)
+                startActivity(intent)
+                finish()
+            }
         }
 
         btn_next.setOnClickListener(this)
@@ -174,10 +207,15 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.btn_next -> {
-                val intent = Intent(this, SelectLevelActivity::class.java)
-                intent.putExtra(MainActivity.PLAYER_ID, playerID)
-                startActivity(intent)
-                finish()
+                // Show the ad if it was loaded already, otherwise, go to next activity
+                if (mInterstitialAd.isLoaded) {
+                    mInterstitialAd.show()
+                } else {
+                    val intent = Intent(this, SelectLevelActivity::class.java)
+                    intent.putExtra(MainActivity.PLAYER_ID, playerID)
+                    startActivity(intent)
+                    finish()
+                }
             }
         }
     }

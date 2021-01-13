@@ -1,5 +1,6 @@
 package com.rommellaranjo.letsmultiply.utils
 
+import android.util.Log
 import com.rommellaranjo.letsmultiply.models.Level
 import com.rommellaranjo.letsmultiply.models.Question
 import com.rommellaranjo.letsmultiply.models.Reputation
@@ -8,6 +9,16 @@ import kotlin.random.Random
 class DataSource {
 
     companion object {
+        /**
+         * A function to decide whether to show an interstitial ad or not
+         * @return Boolean True or False
+         */
+        fun tossCoin() : Boolean {
+            val num = Random.nextInt(0, 100)
+            Log.e("DataSource", "Generated Num = ${num}")
+            return num % 2 == 1
+        }
+
         /**
          * Give out a quote randomly
          * @return String A single motivational quote

@@ -18,7 +18,7 @@
         android:textSize="25sp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:gravity="center"
         />
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/ic_balloons" />
 
     <TextView
@@ -36,10 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Your score is 10/10"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textColor="@color/colorAppName"
         android:textStyle="bold"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         />
 
@@ -48,10 +48,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="You are promoted to General!"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:layout_marginBottom="35dp"
+        android:layout_marginBottom="25dp"
         android:gravity="center"
         />
 
@@ -65,5 +65,15 @@
         android:textColor="@android:color/white"
         android:layout_marginHorizontal="20dp"
         />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/av_banner_show_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        app:adSize="BANNER"
+        app:adUnitId="@string/admob_banner_adunit_id" />
+
 
 </LinearLayout>

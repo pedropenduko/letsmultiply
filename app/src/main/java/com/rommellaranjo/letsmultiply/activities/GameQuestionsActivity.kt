@@ -14,6 +14,8 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 //import androidx.core.content.ContextCompat
 import com.rommellaranjo.letsmultiply.R
 import com.rommellaranjo.letsmultiply.database.DatabaseHandler
@@ -63,6 +65,10 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_questions)
 
+        // preparing the ads
+        MobileAds.initialize(this)
+        val adRequest = AdRequest.Builder().build()
+
         // get the player ID
         if (intent.hasExtra(MainActivity.PLAYER_ID)) {
             playerID = intent.getLongExtra(MainActivity.PLAYER_ID, 0)
@@ -77,6 +83,9 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             Log.e("Let's Multiply Error:", "No Rank/Level ID was passed at the GameQuestionsActivity.")
             finish()
         }
+
+        // Load the Banner Ads
+        av_banner_game_questions.loadAd(adRequest)
 
         dbHandler = DatabaseHandler(this)
 
