@@ -15,7 +15,6 @@ class DataSource {
          */
         fun tossCoin() : Boolean {
             val num = Random.nextInt(0, 100)
-            Log.e("DataSource", "Generated Num = ${num}")
             return num % 2 == 1
         }
 
