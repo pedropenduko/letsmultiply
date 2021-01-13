@@ -208,7 +208,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.btn_next -> {
                 // Show the ad if it was loaded already, otherwise, go to next activity
-                if (mInterstitialAd.isLoaded) {
+                if (mInterstitialAd.isLoaded && DataSource.tossCoin()) {
                     mInterstitialAd.show()
                 } else {
                     val intent = Intent(this, SelectLevelActivity::class.java)
