@@ -47,7 +47,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var score : Int = 0
     private var waiting: Boolean = false
 
-    private var questionDuration: Long = 1000
+    private var questionDuration: Long = 1500
     private var timer: CountDownTimer? = null
     private var timerExpired: Boolean = false
 
@@ -326,7 +326,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
 
             }
-        },1000)
+        },1500)
     }
 
     private fun startTimer() {
@@ -357,7 +357,7 @@ class GameQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                         finish()
 
                     }
-                },1000)
+                },1500)
                 //Toast.makeText(this@GameQuestionsActivity, "Timer is finished.", Toast.LENGTH_SHORT).show()
             }
 

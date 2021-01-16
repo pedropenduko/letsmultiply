@@ -131,14 +131,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     et_name.text.isNullOrEmpty() -> {
                         Toast.makeText(this, "Please type a name.", Toast.LENGTH_SHORT).show()
                     }
-                    !validator.isAlphaNumeric(et_name.text.toString()) -> {
+                    !validator.isAlphaNumeric(et_name.text.toString().trim()) -> {
                         Toast.makeText(
                             this,
                             "Please use only letters[a-z or A-Z] and numbers[0-9].",
                             Toast.LENGTH_LONG
                         ).show()
                     }
-                    !validator.isCorrectLength(et_name.text.toString(), 25) -> {
+                    !validator.isCorrectLength(et_name.text.toString().trim(), 25) -> {
                         Toast.makeText(
                             this,
                             "Name should not be greater than 25 characters.",

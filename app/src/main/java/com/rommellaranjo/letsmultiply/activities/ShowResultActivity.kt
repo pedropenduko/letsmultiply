@@ -196,7 +196,7 @@ class ShowResultActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        tv_congratulations.text = "Good job " + playerDetails!!.name + "!"
+        tv_congratulations.text = "You can do it " + playerDetails!!.name + "!"
         iv_result_image.setImageResource(R.drawable.ic_balloons)
         
         tv_score.text = "Your score is $score/$total_questions!"
