@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             // the Level table in DB is still empty, let us populate the DB
             allLevels = populateLevelInDb()
             // populate also the Reputation table
-            allReputations = populateReputaionInDb()
+            allReputations = populateReputationInDb()
             // populate also the Question table
             populateQuestionInDb()
         } else {
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * This function will populate the Reputation Table in DB
      * @return ArrayList<Reputation> An array containing all reputations that was saved in DB
      */
-    private fun populateReputaionInDb() : ArrayList<Reputation> {
+    private fun populateReputationInDb() : ArrayList<Reputation> {
         val dataSourceReputations = DataSource.getReputations()
 
         dataSourceReputations.forEach {
